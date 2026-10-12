@@ -3,6 +3,7 @@ const form = document.getElementById('order-form');
 const result = document.getElementById('request-result');
 const preview = document.getElementById('message-preview');
 const status = document.getElementById('copy-status');
+form.querySelector('button[type="submit"]').disabled = false;
 form.addEventListener('submit', (event) => {
   event.preventDefault();
   if (!form.reportValidity()) return;
@@ -33,8 +34,7 @@ form.addEventListener('submit', (event) => {
     'Güncel birim fiyat, minimum sipariş adedi, stok ve teslimat koşulları hakkında bilgi paylaşabilir misiniz?'
   ];
   preview.value = lines.join('\n');
-  document.getElementById('send-whatsapp').href = 'https://wa.me/905469325840?text=' + encodeURIComponent(preview.value);
-  document.getElementById('send-email').href = 'mailto:troysoapun@gmail.com?subject=' + encodeURIComponent('Dr. Crazy Sıvı Mentol — Toptan teklif talebi') + '&body=' + encodeURIComponent(preview.value);
+  // Personal request text stays in memory and is opened only by the send action.
   status.textContent = '';
   document.getElementById('copy-message').textContent = 'Mesajı kopyala';
   result.hidden = false;
@@ -79,3 +79,15 @@ document.getElementById('close-result').addEventListener('click', () => {
     if (window.innerWidth > 980) setOpen(false);
   });
 })();
+
+// Keep private message bodies out of DOM link URLs used by outbound-click measurement.
+document.getElementById('send-whatsapp').addEventListener('click', event => {
+  event.preventDefault();
+  if (!preview.value) return;
+  window.open('https://wa.me/905469325840?text=' + encodeURIComponent(preview.value), '_blank', 'noopener,noreferrer');
+});
+document.getElementById('send-email').addEventListener('click', event => {
+  event.preventDefault();
+  if (!preview.value) return;
+  window.location.href = 'mailto:troysoapun@gmail.com?subject=' + encodeURIComponent('Dr. Crazy Sıvı Mentol — Toptan teklif talebi') + '&body=' + encodeURIComponent(preview.value);
+});
